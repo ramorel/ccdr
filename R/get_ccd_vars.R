@@ -5,10 +5,16 @@
 #' @param View Do you want to View the data frame in the R data viewer
 #' @return A tibble with variable names, descriptions, and miscellaneous information
 #'
-#' @import dplyr stringr rvest purrr
-#'
+#' @import dplyr stringr purrr
+#' @importFrom utils download.file
+#' @importFrom janitor clean_names
+#' @importFrom readxl read_excel
+#' @importFrom rvest html_nodes html_attr
+#' @importFrom xml2 read_html
+#' @importFrom utils read.csv
 #' @examples
 #' # Get variables from all schools in New York state for the 2014-2015 school year.
+#' library(ccdr)
 #' ny_vars <- get_ccd_vars(endyear = 2015, View = F)
 
 get_ccd_vars <- function(endyear = 2016, View = F) {
@@ -23,9 +29,9 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
       y <- paste0("sc", str_sub(endyear-1, -2))
 
       ccd_urls <-
-        read_html("https://nces.ed.gov/ccd/pubschuniv.asp") %>%
-        html_nodes("a") %>%
-        html_attr("href") %>%
+        xml2::read_html("https://nces.ed.gov/ccd/pubschuniv.asp") %>%
+        rvest::html_nodes("a") %>%
+        rvest::html_attr("href") %>%
         str_subset(paste0("(?=.*", y, ")(.*lay)")) %>%
         paste0("https://nces.ed.gov/ccd/", .)
 
@@ -46,7 +52,7 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
       tf <- tempfile(tmpdir = tmp_dir, fileext = ".txt")
       download.file(ccd_urls, tf)
     }
-    vars <- read_lines(tf)
+    vars <- readLines(tf)
     # filtering out the front matter
     vars <- vars[-c(1:which(str_detect(vars, "^NCESSCH"))-1)] %>%
       subset(str_detect(., "\\S")) %>%
@@ -62,7 +68,8 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
                         collapse = " "),
                   sep = ",")) %>%
       paste(collapse = "\n") %>%
-      read_csv(col_names = c("variable", "description"))
+      read.csv(col_names = c("variable", "description"),
+               stringsAsFactors = F)
 
     if (View == T) {
       View(vars)
@@ -74,9 +81,9 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
     y <- paste(str_sub(endyear-1, -2), str_sub(endyear, -2), sep = "-")
 
     ccd_urls <-
-      read_html("https://nces.ed.gov/ccd/pubschuniv.asp") %>%
-      html_nodes("a") %>%
-      html_attr("href") %>%
+      xml2::read_html("https://nces.ed.gov/ccd/pubschuniv.asp") %>%
+      rvest::html_nodes("a") %>%
+      rvest::html_attr("href") %>%
       str_subset(paste0("(.*", y, ")(\\S+)(.*lay|.*Lay)")) %>%
       paste0("https://nces.ed.gov/ccd/", .)
 

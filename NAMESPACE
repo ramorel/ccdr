@@ -2,5 +2,11 @@
 
 import(dplyr)
 import(purrr)
-import(rvest)
 import(stringr)
+importFrom(janitor,clean_names)
+importFrom(readxl,read_excel)
+importFrom(rvest,html_attr)
+importFrom(rvest,html_nodes)
+importFrom(utils,download.file)
+importFrom(utils,read.csv)
+importFrom(xml2,read_html)

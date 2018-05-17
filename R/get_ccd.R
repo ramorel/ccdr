@@ -6,18 +6,20 @@
 #' @param variables A string of variables names for the variables to access. Use "all" for all variables.
 #' @return A tibble with school-level data for the given year and state(s)
 #'
-#' @import dplyr stringr rvest purrr
+#' @import dplyr stringr purrr
+#' @importFrom utils download.file
+#' @importFrom janitor clean_names
+#' @importFrom rvest html_nodes html_attr
+#' @importFrom xml2 read_html
+#' @importFrom utils read.csv
 #'
 #' @examples
 #' # Get data from all schools in New York state for the 2014-2015 school year
+#' library(ccdr)
 #' ny_dat <- get_ccd(states = "New York", endyear = 2015, variables = "all")
 
 get_ccd <- function(states = "all", endyear = 2016,
                     variables = "all") {
-  require(dplyr)
-  require(stringr)
-  require(rvest)
-  require(purrr)
 
   if (endyear < 2008 | endyear > 2016) {
     stop("WARNING: `endyear` must be between 2009 and 2016")
@@ -32,9 +34,10 @@ get_ccd <- function(states = "all", endyear = 2016,
     y <- paste0(str_sub(endyear-1, -2), str_sub(endyear, -2))
   }
 
-  ccd_urls <- read_html("https://nces.ed.gov/ccd/pubschuniv.asp") %>%
-    html_nodes("a") %>%
-    html_attr("href") %>%
+  ccd_urls <-
+    xml2::read_html("https://nces.ed.gov/ccd/pubschuniv.asp") %>%
+    rvest::html_nodes("a") %>%
+    rvest::html_attr("href") %>%
     str_subset(paste0("(?=.*", y, ")(.*txt|.*csv)(.zip)")) %>%
     .[!str_detect(., "GEOID")] %>%
     paste0("https://nces.ed.gov/ccd/", .)
@@ -56,7 +59,7 @@ get_ccd <- function(states = "all", endyear = 2016,
         janitor::clean_names()
 
     } else {
-      message("comma-delimited file; using read_csv")
+      message("comma-delimited file; using read.csv")
       datf <- read.csv(fpath, stringsAsFactors = F) %>%
         as_tibble() %>%
         janitor::clean_names()
@@ -74,8 +77,6 @@ get_ccd <- function(states = "all", endyear = 2016,
     }
   })
 
-  unlink(fpath)
-  unlink(tf)
 
   if (length(ccd_dat) > 1){
     ccd_dat <- reduce(

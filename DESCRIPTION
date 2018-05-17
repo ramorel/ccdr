@@ -2,14 +2,15 @@ Package: ccdr
 Title: A Tiny Package for Accessing the Common Core of Data
 Version: 0.0.1
 Authors@R: person("Richard", "Paquin Morel", email = "richard.morel@u.northwestern.edu", role = c("aut", "cre"))
-Description: Access data on public schools in the United States. The Common Core of Data contains administrative and demographic data on all public schools in the United States
+Description: Access data on public schools in the United States from the Common Core of Data. 
+  The Common Core of Data contains administrative and demographic data on all public schools in the United States
 Depends: R (>= 3.4.3),
     dplyr,
-    rvest,
     stringr,
     purrr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Suggests: testthat
+Suggests: testthat, 
+Imports: janitor, readxl, rvest, xml2

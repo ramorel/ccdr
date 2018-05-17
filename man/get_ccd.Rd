@@ -21,5 +21,6 @@ Get data from the NCES's Common Core of Data for year 2009 to 2016
 }
 \examples{
 # Get data from all schools in New York state for the 2014-2015 school year
+library(ccdr)
 ny_dat <- get_ccd(states = "New York", endyear = 2015, variables = "all")
 }

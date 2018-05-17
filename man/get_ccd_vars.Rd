@@ -19,5 +19,6 @@ Get variable names from the NCES's Common Core of Data for year 2009 to 2016
 }
 \examples{
 # Get variables from all schools in New York state for the 2014-2015 school year.
+library(ccdr)
 ny_vars <- get_ccd_vars(endyear = 2015, View = F)
 }
