@@ -4,6 +4,10 @@
 #' @param states A string of state names (or name) indicating the states that you want data for.
 #' @param endyear A numeric year indicated the end year of a school year (e.g., 2016 to get 2015-2016 data).
 #' @param variables A string of variables names for the variables to access. Use "all" for all variables.
+#' @return A tibble with school-level data for the given year and state(s)
+#'
+#' @import dplyr stringr rvest purrr
+#'
 #' @examples
 #' # Get data from all schools in New York state for the 2014-2015 school year
 #' ny_dat <- get_ccd(states = "New York", endyear = 2015, variables = "all")

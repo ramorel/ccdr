@@ -3,15 +3,15 @@
 #'
 #' @param endyear A numeric year indicated the end year of a school year (e.g., 2016 to get 2015-2016 data).
 #' @param View Do you want to View the data frame in the R data viewer
+#' @return A tibble with variable names, descriptions, and miscellaneous information
+#'
+#' @import dplyr stringr rvest purrr
+#'
 #' @examples
 #' # Get variables from all schools in New York state for the 2014-2015 school year.
 #' ny_vars <- get_ccd_vars(endyear = 2015, View = F)
 
 get_ccd_vars <- function(endyear = 2016, View = F) {
-  require(dplyr)
-  require(stringr)
-  require(rvest)
-  require(purrr)
 
   if (endyear < 2008 | endyear > 2016) {
     stop("WARNING: `endyear` must be between 2009 and 2016")

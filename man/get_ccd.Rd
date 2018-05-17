@@ -13,6 +13,9 @@ get_ccd(states = "all", endyear = 2016, variables = "all")
 
 \item{variables}{A string of variables names for the variables to access. Use "all" for all variables.}
 }
+\value{
+A tibble with school-level data for the given year and state(s)
+}
 \description{
 Get data from the NCES's Common Core of Data for year 2009 to 2016
 }

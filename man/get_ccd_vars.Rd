@@ -11,6 +11,9 @@ get_ccd_vars(endyear = 2016, View = F)
 
 \item{View}{Do you want to View the data frame in the R data viewer}
 }
+\value{
+A tibble with variable names, descriptions, and miscellaneous information
+}
 \description{
 Get variable names from the NCES's Common Core of Data for year 2009 to 2016
 }
