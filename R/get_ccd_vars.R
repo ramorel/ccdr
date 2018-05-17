@@ -12,6 +12,8 @@
 #' @importFrom rvest html_nodes html_attr
 #' @importFrom xml2 read_html
 #' @importFrom utils read.csv
+#' @export
+#'
 #' @examples
 #' # Get variables from all schools in New York state for the 2014-2015 school year.
 #' library(ccdr)

@@ -13,6 +13,8 @@
 #' @importFrom xml2 read_html
 #' @importFrom utils read.csv
 #'
+#' @export
+#'
 #' @examples
 #' # Get data from all schools in New York state for the 2014-2015 school year
 #' library(ccdr)
