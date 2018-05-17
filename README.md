@@ -5,4 +5,4 @@ The [Common Core of Data](https://nces.ed.gov/ccd/) is a comprehensive database 
 
 There is no API for the CCD right now (maybe some day?). The `get_ccd` function downloads the relevant flat files from the [CCD's website](https://nces.ed.gov/ccd/pubschuniv.asp). This is less than ideal, but alas. The files are big and they take a while to download. There's no way aroud that at this point. 
 
-![](/Users/richardmorel/Documents/GitHub/ccdr/img)
+![](https://github.com/ramorel/ccdr/blob/master/img/452601.jpgs)
