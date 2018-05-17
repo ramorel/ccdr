@@ -36,25 +36,17 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
         rvest::html_attr("href") %>%
         str_subset(paste0("(?=.*", y, ")(.*lay)")) %>%
         paste0("https://nces.ed.gov/ccd/", .)
-
-      tmp_dir <- tempdir()
-      tf <- tempfile(tmpdir = tmp_dir, fileext = ".txt")
-      download.file(ccd_urls, tf)
     } else {
       y <- paste0("psu", str_sub(endyear-1, -2))
 
       ccd_urls <-
-        read_html("https://nces.ed.gov/ccd/pubschuniv.asp") %>%
-        html_nodes("a") %>%
-        html_attr("href") %>%
+        xml2::read_html("https://nces.ed.gov/ccd/pubschuniv.asp") %>%
+        rvest::html_nodes("a") %>%
+        rvest::html_attr("href") %>%
         str_subset(paste0("(?=.*", y, ")(.*lay)")) %>%
         paste0("https://nces.ed.gov/ccd/", .)
-
-      tmp_dir <- tempdir()
-      tf <- tempfile(tmpdir = tmp_dir, fileext = ".txt")
-      download.file(ccd_urls, tf)
     }
-    vars <- readLines(tf)
+    vars <- readLines(url(ccd_urls))
     # filtering out the front matter
     vars <- vars[-c(1:which(str_detect(vars, "^NCESSCH"))-1)] %>%
       subset(str_detect(., "\\S")) %>%
