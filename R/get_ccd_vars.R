@@ -26,7 +26,7 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
   }
 
   message(paste0("getting layout for school year: ", endyear-1, "-", endyear))
-  if (endyear <= 2013) {
+  if (endyear <= 2014) {
     if (between(endyear, 2012, 2014)) {
       y <- paste0("sc", str_sub(endyear-1, -2))
 
@@ -46,11 +46,15 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
         str_subset(paste0("(?=.*", y, ")(.*lay)")) %>%
         paste0("https://nces.ed.gov/ccd/", .)
     }
-    vars <- readLines(url(ccd_urls))
+    con <- url(ccd_urls)
+    vars <- readLines(con)
     # filtering out the front matter
     vars <- vars[-c(1:(which(str_detect(vars, "^NCESSCH"))-1))] %>%
       subset(str_detect(., "\\S")) %>%
-      map(~ scan(text =., what = "character", encoding = "latin1")) %>%
+      subset(!str_detect(., "^(\\s+)")) %>%
+      map(~ scan(text =.,
+                 what = "character",
+                 quote = "")) %>%
       subset(!map_lgl(., ~ str_detect(.[1], "^[0-9]"))) %>%
       subset(!map_lgl(., ~ str_detect(.[1], "NOTE"))) %>%
       map(~ str_replace(., ",", "")) %>%
@@ -63,8 +67,12 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
                   sep = ",")) %>%
       paste(collapse = "\n") %>%
       read.csv(text = ., header = F,
-               col.names = c("variable", "description"),
-               stringsAsFactors = F)
+               col.names = c("variable_name", "description"),
+               stringsAsFactors = F) %>%
+      mutate(variable_name = str_remove(variable_name, "\\+")) %>%
+      mutate(variable_name = str_remove(variable_name, "[\\d]{2}$"))
+
+    close(con)
 
     if (View == T) {
       View(vars)
@@ -79,17 +87,20 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
       xml2::read_html("https://nces.ed.gov/ccd/pubschuniv.asp") %>%
       rvest::html_nodes("a") %>%
       rvest::html_attr("href") %>%
-      str_subset(paste0("(.*", y, ")(\\S+)(.*lay|.*Lay)")) %>%
+      str_subset(paste0("(.*", y, ")(.*lay|.*Lay)")) %>%
       paste0("https://nces.ed.gov/ccd/", .)
 
     vars <- map(ccd_urls, ~ {
       tmp_dir <- tempdir()
       tf <- tempfile(tmpdir = tmp_dir, fileext = ".xlsx")
-      download.file(., tf)
+      download.file(URLencode(.), tf, mode="wb")
 
       vars <- readxl::read_excel(tf) %>%
-        janitor::clean_names()
+        janitor::clean_names() %>%
+        mutate(variable_name = str_remove(variable_name, "\\+"))
     })
+
+    unlink(tmp_dir)
 
     vars <- bind_rows(vars)
 
