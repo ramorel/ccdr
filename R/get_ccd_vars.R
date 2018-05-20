@@ -48,7 +48,7 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
     }
     vars <- readLines(url(ccd_urls))
     # filtering out the front matter
-    vars <- vars[-c(1:which(str_detect(vars, "^NCESSCH"))-1)] %>%
+    vars <- vars[-c(1:(which(str_detect(vars, "^NCESSCH"))-1))] %>%
       subset(str_detect(., "\\S")) %>%
       map(~ scan(text =., what = "character", encoding = "latin1")) %>%
       subset(!map_lgl(., ~ str_detect(.[1], "^[0-9]"))) %>%
@@ -62,7 +62,8 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
                         collapse = " "),
                   sep = ",")) %>%
       paste(collapse = "\n") %>%
-      read.csv(col_names = c("variable", "description"),
+      read.csv(text = ., header = F,
+               col.names = c("variable", "description"),
                stringsAsFactors = F)
 
     if (View == T) {
