@@ -27,11 +27,11 @@ get_ccd <- function(states = "all", endyear = 2016,
     stop("WARNING: `endyear` must be between 2009 and 2016")
   }
 
-  message(paste0("getting school year: ", endyear, "-", endyear+1))
+  message(paste0("getting school year: ", endyear-1, "-", endyear))
   message(paste0("getting variables: ", variables))
 
-  if (endyear <= 2013) {
-    y <- paste0("sc", str_sub(endyear, -2))
+  if (endyear <= 2014) {
+    y <- paste0("sc", str_sub((endyear-1), -2))
   } else {
     y <- paste0(str_sub(endyear-1, -2), str_sub(endyear, -2))
   }
@@ -59,12 +59,23 @@ get_ccd <- function(states = "all", endyear = 2016,
       datf <- read.delim(fpath, stringsAsFactors = F) %>%
         as_tibble() %>%
         janitor::clean_names()
-
+      datf <- setNames(
+        datf,
+        str_replace(names(datf),
+                    "(?![g])([a-z])([\\d]{2}$)",
+                    "\\1"))
+      print(names(datf))
     } else {
       message("comma-delimited file; using read.csv")
       datf <- read.csv(fpath, stringsAsFactors = F) %>%
         as_tibble() %>%
         janitor::clean_names()
+      datf <- setNames(
+        datf,
+        str_replace(names(datf),
+                    "(?![g])([a-z])([\\d]{2}$)",
+                    "\\1"))
+      print(names(datf))
     }
 
     if (states != "all") {
@@ -78,7 +89,6 @@ get_ccd <- function(states = "all", endyear = 2016,
       }
     }
   })
-
 
   if (length(ccd_dat) > 1){
     ccd_dat <- reduce(

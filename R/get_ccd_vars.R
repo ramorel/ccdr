@@ -100,8 +100,6 @@ get_ccd_vars <- function(endyear = 2016, View = F) {
         mutate(variable_name = str_remove(variable_name, "\\+"))
     })
 
-    unlink(tmp_dir)
-
     vars <- bind_rows(vars)
 
     vars <- vars %>%
